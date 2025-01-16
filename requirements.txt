@@ -1,0 +1,10 @@
+mangum
+SQLAlchemy
+psycopg2-binary
+fastapi[standard]
+boto3
+geopy
+alembic
+pytest
+coverage
+requests

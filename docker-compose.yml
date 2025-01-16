@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  web:
+    restart: always
+    command: fastapi dev main.py --host 0.0.0.0 --port 8000
+    container_name: alternova-image
+    tty: true
+    build:
+      context: .
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    environment:
+      # Project env config.
+      - DEBUG=${DEBUG:-}
+
+      # Database config.
+      - DATABASE_HOST=${DATABASE_HOST:-}
+      - DATABASE_NAME=${DATABASE_NAME:-}
+      - DATABASE_USER=${DATABASE_USER:-}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-}
+      - DATABASE_PORT=${DATABASE_PORT:-}
+      - USE_DATABASE=${USE_DATABASE:-}
+
+      # Storage r2 config.
+      - ENDPOINT_URL=${ENDPOINT_URL:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - BUCKET_NAME=${BUCKET_NAME:-}
+      - R2_MEDIA_URL=${R2_MEDIA_URL:-}
+    volumes:
+      - .:/app:Z
+    depends_on:
+      - postgres
+
+  nginx:
+    image: nginx_server
+    restart: always
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - 9090:9090
+    depends_on:
+      - web
