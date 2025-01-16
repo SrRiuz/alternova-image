@@ -21,6 +21,9 @@ DATABASE = (
     else {}
 )
 
+# Storage
+LOCAL_STORAGE_DIR = "storage"
+
 # Pagination config
 PAGINATION = {"PAGE_LIMIT": 12}
 
