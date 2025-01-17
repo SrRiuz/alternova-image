@@ -1,7 +1,6 @@
 [run]
 source = modules
 omit =
-    */migrations/*
     */tests/*
     */__init__.py
     */urls.py

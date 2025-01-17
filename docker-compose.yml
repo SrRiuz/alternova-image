@@ -9,8 +9,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '127.0.0.1:5432:5432'
-    volumes:
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   web:
     restart: always
@@ -35,12 +33,6 @@ services:
       - DATABASE_PORT=${DATABASE_PORT:-}
       - USE_DATABASE=${USE_DATABASE:-}
 
-      # Storage r2 config.
-      - ENDPOINT_URL=${ENDPOINT_URL:-}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
-      - BUCKET_NAME=${BUCKET_NAME:-}
-      - R2_MEDIA_URL=${R2_MEDIA_URL:-}
     volumes:
       - .:/app:Z
     depends_on:
