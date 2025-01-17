@@ -29,6 +29,11 @@ PAGINATION = {"PAGE_LIMIT": 12}
 
 SHORT_ID_SIZE = 8
 
+# Media
+MEDIA_PATH = "v1/images/media"
+BASE_MEDIA_BACKEND_URL = "http://localhost:9090"
+MEDIA_URL = f"{BASE_MEDIA_BACKEND_URL}/{MEDIA_PATH}"
+
 # Cors
 ALLOWER_CORS_ORIGINS = (
     "http://localhost",

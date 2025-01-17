@@ -7,3 +7,4 @@ geopy
 pytest
 coverage
 requests
+pillow
