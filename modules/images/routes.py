@@ -129,3 +129,31 @@ async def create_media_object(data: CreateImageSchema) -> JSONResponse:
     data = ImageSchema.parse_obj(media.to_dict()).dict()
 
     return JSONResponse(data, HTTPStatus.CREATED)
+
+
+@router.delete(
+    "/{image_id}",
+    tags=["Media"],
+    summary="Delete a file.",
+    responses={
+        200: {
+            "description": "Remove an object from local storage.",
+            "content": {"application/json": {"example": {}}},
+        },
+        404: {
+            "description": "Error if the object id not exists",
+            "content": {"application/json": {"example": {"detail": "Object not found"}}},
+        },
+    },
+)
+def delete_object(image_id: str) -> JSONResponse:
+    """Remove an object from local storage."""
+    media = get_object_or_404(Image, id=image_id)
+
+    # Delete the file of the local storage
+    delete_file(media.name)
+
+    # Remove the database
+    Images.objects.delete(id=media.id)
+
+    return JSONResponse({}, HTTPStatus.OK)
