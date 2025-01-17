@@ -1,10 +1,3 @@
-compile:
-	(rm -rf aws_lambda_artifact.zip);
-	(pip3 install --target=dependencies --platform=manylinux2014_x86_64 --only-binary=:all: -r requirements.txt);
-	(cd dependencies; zip ../aws_lambda_artifact.zip -r .);
-	(rm -rf dependencies)
-	(zip -r aws_lambda_artifact.zip . -x@.cpileignore);
-
 build:
 	docker-compose build
 
