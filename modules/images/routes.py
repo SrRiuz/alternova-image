@@ -21,6 +21,7 @@ from modules.images.schemas.image import ImageSchema, CreateImageSchema
 # Libs
 from utils.shortcuts import get_object_or_404
 from core.pagination.pagination import Pagination
+from modules.images.methods.bg import remove_bg_from_image
 from modules.images.methods.convert import change_image_format
 from modules.images.methods.storage import upload_file, delete_file, get_base64_from_file_name
 from modules.images.methods.files import base64_to_bytes_io, generate_hashed_name
@@ -91,7 +92,7 @@ async def get_images_list() -> JSONResponse:
 async def get_image_from_id(image_id: str) -> JSONResponse:
     """Gets information about an image."""
     media = get_object_or_404(Image, id=image_id)
-    data = ImageSchema.parse_obj(media.to_dict()).dict()
+    data = ImageSchema.parse_obj(media.to_dict()).to_representation()
     return JSONResponse(data, status_code=HTTPStatus.OK)
 
 
@@ -135,7 +136,7 @@ async def create_media_object(data: CreateImageSchema) -> JSONResponse:
     upload_file(file_bytes, file_name)
 
     media = Images.objects.create(file_name=file_name)
-    data = ImageSchema.parse_obj(media.to_dict()).dict()
+    data = ImageSchema.parse_obj(media.to_dict()).to_representation()
 
     return JSONResponse(data, HTTPStatus.CREATED)
 
@@ -244,6 +245,50 @@ def image_change_format(
     upload_file(new_format_bytes, file_name)
 
     media = Images.objects.create(file_name=file_name)
-    data = ImageSchema.parse_obj(media.to_dict()).dict()
+    data = ImageSchema.parse_obj(media.to_dict()).to_representation()
+
+    return JSONResponse(data, HTTPStatus.CREATED)
+
+
+@router.post(
+    "/rembg/{image_id}",
+    tags=["Media"],
+    summary="It is responsible for removing the background of an image.",
+    responses={
+        200: {
+            "description": "It is responsible for removing the background of an image.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": "...",
+                        "name": "...",
+                        "is_active": False,
+                        "media_link": "...",
+                    },
+                }
+            },
+        },
+        404: {
+            "description": "Error if the object id not exists",
+            "content": {"application/json": {"example": {"detail": "Object not found"}}},
+        },
+    },
+)
+def rembg_from_image(image_id: str) -> JSONResponse:
+    """It is responsible for removing the background of an image."""
+    media = get_object_or_404(Image, id=image_id)
+
+    _, format = media.name.split(".")
+    base64_file = get_base64_from_file_name(media.name)
+    file_bytes = base64_to_bytes_io(base64_file)
+
+    file_name, _ = generate_hashed_name(f"{image_id}.{format}")
+
+    image_whith_out_bg_bytes = remove_bg_from_image(file_bytes, format)
+
+    upload_file(image_whith_out_bg_bytes, file_name)
+
+    media = Images.objects.create(file_name=file_name)
+    data = ImageSchema.parse_obj(media.to_dict()).to_representation()
 
     return JSONResponse(data, HTTPStatus.CREATED)
