@@ -8,7 +8,7 @@ from core.settings import LOCAL_STORAGE_DIR
 
 
 def get_base64_from_file_name(file_name: str) -> str:
-    """ """
+    """Get the base64 of a file"""
     file_path = f"{LOCAL_STORAGE_DIR}/{file_name}"
     if not os.path.exists(file_path):
         raise FileNotFoundError(
@@ -27,6 +27,9 @@ def upload_file(file_bytes: io.BytesIO, file_name: str) -> None:
         file.close()
 
 
-def delete_file(file_name) -> None:
-    """It is responsible for deleting a file in the storage folder"""
+def delete_file(file_name: str) -> None:
+    """
+    It is responsible for deleting a file in the
+    storage folder
+    """
     os.remove(f"{LOCAL_STORAGE_DIR}/{file_name}")
