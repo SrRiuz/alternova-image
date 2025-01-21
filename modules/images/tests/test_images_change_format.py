@@ -12,6 +12,33 @@ client = TestClient(app)
 
 class TestImageRoute:
 
+    def test_change_image_format_from_png_to_jepg(self):
+        image_data = get_base64_image()
+        image = client.post(
+            "/v1/images",
+            json={
+                "name": "test.png",
+                "data": image_data,
+            },
+        ).json()
+        image_id = image["id"]
+
+        response = client.post(f"/v1/images/convert/{image_id}/jepg")
+
+    def test_change_image_format_from_png_to_jpg(self):
+        image_data = get_base64_image()
+        image = client.post(
+            "/v1/images",
+            json={
+                "name": "test.png",
+                "data": image_data,
+            },
+        ).json()
+        image_id = image["id"]
+
+        response = client.post(f"/v1/images/convert/{image_id}/jpg")
+        assert response.status_code == HTTPStatus.CREATED
+
     def test_change_image_format_from_png_to_webp(self):
         image_data = get_base64_image()
         image = client.post(
