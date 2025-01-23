@@ -8,3 +8,5 @@ pytest
 coverage
 requests
 pillow
+rembg
+onnxruntime

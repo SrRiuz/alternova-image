@@ -10,7 +10,7 @@ from main import app
 client = TestClient(app)
 
 
-class TestImageRoute:
+class TestChangeImageFormatRoute:
 
     def test_change_image_format_from_png_to_jepg(self):
         image_data = get_base64_image()
